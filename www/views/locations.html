@@ -1,0 +1,26 @@
+<ion-view>
+  <ion-header-bar class="bar-positive" align-title="left">
+    <h1 class="title">Locations</h1>
+    <div class="buttons pull-right">
+      <button class="button pull-right button-icon icon ion-plus" ng-click="createNew()"></button>
+      <button class="button pull-right button-icon icon ion-more" ng-click="more()"></button>
+    </div>
+  </ion-header-bar>
+  <ion-content>
+    <ion-refresher
+            pulling-text="Pull to refresh..."
+            on-refresh="doRefresh()">
+    </ion-refresher>
+    <ion-list can-swipe="true">
+      <ion-item ng-click="showLocation(location)" class="item item-thumbnail-left" ng-repeat="location in locations">
+        <img ng-src="{{location.image}}">
+        <h1>{{location.name}}</h1>
+      </ion-item>
+    </ion-list>
+    <div class="card" ng-if="location.length == 0">
+      <div class="item item-text-wrap">
+        No locations added yet.
+      </div>
+    </div>
+  </ion-content>
+</ion-view>
