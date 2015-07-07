@@ -6,7 +6,7 @@
   </ion-header-bar>
   <ion-content scroll="false">
 
-    <div class="mapWrap"  data-tap-disabled="true">
+    <div class="mapWrap" data-tap-disabled="true">
       <div id="panel">
         <input ng-click="showMarkers()" type="button" value="Show All Markers">
         <input ng-click="hideMarkers()" type="button" value="Hide Markers">
@@ -14,8 +14,29 @@
       </div>
       <map center="{{positions[0].lat}}, {{positions[0].lng}}" zoom="9">
         <!-- ngRepeat: pos in positions -->
-        <marker ng-repeat="mark in markers" position="{{mark.lat}}, {{mark.lng}}" title="{{mark.title}}"></marker>
+        <marker ng-repeat="mark in markers" position="{{mark.lat}}, {{mark.lng}}" title="{{mark.title}}"
+                id="{{mark.title}}" on-click="showInfoWindow(event, 'bar')">
+
+          <info-window id="bar" max-width="200" visible-on-marker="{{mark.title}}">
+            <div ng-non-bindable="">
+              <div id="siteNotice"></div>
+              <h1 id="firstHeading" class="firstHeading">{{mark.title}}</h1>
+
+              <div id="bodyContent">
+                <p>
+                  <b>{{mark.title}}</b>{{mark.description}}
+                </p>
+                <p>
+                  Attribution: {{mark.title}}, <a ng-href="{{mark.image}}">Nelson's_Column</a>
+                  (last visited June 22, 2009).
+                </p>
+              </div>
+            </div>
+          </info-window>
+        </marker>
       </map>
     </div>
   </ion-content>
 </ion-view>
+
+

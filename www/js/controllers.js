@@ -25,6 +25,7 @@ app.controller('MarkerRemoveCtrl', function($scope, $ionicLoading, LocationServi
 
     $scope.$on('mapInitialized', function(event, map) {
         $scope.map = map;
+        $scope.getLocations();
     });
 
 
@@ -43,22 +44,15 @@ app.controller('MarkerRemoveCtrl', function($scope, $ionicLoading, LocationServi
                 marker["lat"] = location.lat;
                 marker['lng'] = location.lng;
                 marker['title'] = location.name;
-
+                marker['description'] = location.description;
+                marker['image'] = location.image;
+                marker['audio'] = location.audio;
                 my_markers.push(marker);
             });
             console.log(my_markers);
             $scope.markers = my_markers;
         });
     };
-
-    //$scope.markers = [{lat: 51.5072, lng: -0.1275, title: "London"},
-    //    {lat: 52.3931, lng: -0.7229, title: "Kettering"},
-    //    {lat: 52.0400, lng: -0.7600, title: "Milton Keynes"},
-    //    {lat: 51.7550, lng: -0.3360, title: "St. Albans"},
-    //    {lat: 40.75, lng: -74.17},
-    //    {lat: 40.76, lng: -74.16},
-    //    {lat: 40.77, lng: -74.15},
-    //    {lat: 40.78, lng: -74.14}];
 
     $scope.showMarkers = function() {
         for (var key in $scope.map.markers) {
