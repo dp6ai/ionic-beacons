@@ -10,6 +10,7 @@
       <div id="panel">
         <input ng-click="showMarkers()" type="button" value="Show All Markers">
         <input ng-click="hideMarkers()" type="button" value="Hide Markers">
+        <input ng-click="getLocations()" type="button" value="Get Locations">
       </div>
       <map center="{{positions[0].lat}}, {{positions[0].lng}}" zoom="9">
         <!-- ngRepeat: pos in positions -->
