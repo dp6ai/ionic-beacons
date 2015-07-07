@@ -1,6 +1,5 @@
-angular.module('location')
 
-    .controller('LocationsCtrl', function ($scope, LocationService, $state) {
+app.controller('LocationsCtrl', function ($scope, LocationService, $state) {
         $scope.locations = LocationService.query();
 
         $scope.doRefresh = function () {
@@ -15,40 +14,67 @@ angular.module('location')
         };
     })
 
-    .controller('LocationCtrl', function ($scope, LocationService, $state, $stateParams) {
+app.controller('LocationCtrl', function ($scope, LocationService, $state, $stateParams) {
         $scope.location = LocationService.get({location: $stateParams.locationId});
     })
 
 
-    .controller('MarkerRemoveCtrl', function($scope, $ionicLoading) {
+app.controller('MarkerRemoveCtrl', function($scope, $ionicLoading, LocationService) {
 
-        $scope.positions = [{
-            lat: 43.07493,
-            lng: -89.381388
-        }];
+    $scope.positions = [{
+        lat: 51.7550,
+        lng: -0.3360
+    }];
 
-        $scope.$on('mapInitialized', function(event, map) {
-            $scope.map = map;
-        });
+    $scope.markers = [{lat: 51.5072, lng: -0.1275, title: "London"},
+        {lat: 52.3931, lng: -0.7229, title: "Kettering"},
+        {lat: 52.0400, lng: -0.7600, title: "Milton Keynes"},
+        {lat: 51.7550, lng: -0.3360, title: "St. Albans"},
+        {lat: 40.75, lng: -74.17},
+        {lat: 40.76, lng: -74.16},
+        {lat: 40.77, lng: -74.15},
+        {lat: 40.78, lng: -74.14}];
 
-        $scope.centerOnMe= function(){
-            $scope.positions = [];
-
-
-            $ionicLoading.show({
-                template: 'Loading...'
-            });
-
-
-            navigator.geolocation.getCurrentPosition(function(position) {
-                var pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-                $scope.positions.push({lat: pos.k,lng: pos.B});
-                console.log(pos);
-                $scope.map.setCenter(pos);
-                $ionicLoading.hide();
-            });
-
+    $scope.showMarkers = function() {
+        for (var key in $scope.map.markers) {
+            $scope.map.markers[key].setMap($scope.map);
         };
+    };
 
+    $scope.hideMarkers = function() {
+        for (var key in $scope.map.markers) {
+            $scope.map.markers[key].setMap(null);
+        };
+    };
+
+
+    $scope.$on('mapInitialized', function(event, map) {
+        $scope.map = map;
     });
 
+
+    $scope.centerOnMe= function(){
+        $scope.positions = [];
+
+        $ionicLoading.show({
+            template: 'Loading...'
+        });
+
+        navigator.geolocation.getCurrentPosition(function(position) {
+            var pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+            $scope.positions.push({lat: pos.k,lng: pos.B});
+            console.log(pos);
+            $scope.map.setCenter(pos);
+            $ionicLoading.hide();
+
+            $scope.marker = new google.maps.Marker({
+                position: new google.maps.LatLng(pos.k, pos.B),
+                map: $scope.map,
+                title: 'Holas!'
+            }, function(err) {
+                console.err(err);
+            });
+        });
+
+    };
+});

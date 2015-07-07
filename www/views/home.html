@@ -3,13 +3,17 @@
     <button class="button button-icon ion-pinpoint" ng-click="centerOnMe()"></button>
     <h1 class="title">Ionic Blank Starter</h1>
     <a ui-sref="locations" class="button icon-right ion-chevron-right button-clear button-dark">Locations</a>
-
   </ion-header-bar>
   <ion-content scroll="false">
+
     <div class="mapWrap"  data-tap-disabled="true">
-      <map center="43.07493,-89.381388" zoom="15">
+      <div id="panel">
+        <input ng-click="showMarkers()" type="button" value="Show All Markers">
+        <input ng-click="hideMarkers()" type="button" value="Hide Markers">
+      </div>
+      <map center="{{positions[0].lat}}, {{positions[0].lng}}" zoom="9">
         <!-- ngRepeat: pos in positions -->
-        <marker ng-repeat=" pos in positions" position="{{pos.lat}},{{pos.lng}}"></marker>
+        <marker ng-repeat="mark in markers" position="{{mark.lat}}, {{mark.lng}}" title="{{mark.title}}"></marker>
       </map>
     </div>
   </ion-content>
