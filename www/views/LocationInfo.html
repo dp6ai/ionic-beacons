@@ -1,0 +1,16 @@
+<info-window id="bar" max-width="200" visible-on-marker="{{mark.title}}">
+  <div ng-non-bindable="">
+    <div id="siteNotice"></div>
+    <h1 id="firstHeading" class="firstHeading">{{mark.title}}</h1>
+    <div id="bodyContent">
+      <p>
+        <b>{{mark.title}}</b>{{mark.description}}
+      </p>
+      <p>
+        <img ng-src="{{mark.image}}" alt="{{mark.title}}" width="150" />
+        <br />
+        <a ui-sref="ranging" class="button button-block icon-right ion-chevron-right button-positive">Learn More</a>
+      </p>
+    </div>
+  </div>
+</info-window>

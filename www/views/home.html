@@ -1,10 +1,9 @@
 <ion-view>
   <ion-pane>
-
     <ion-header-bar class="bar-stable">
       <button class="button button-icon ion-pinpoint" ng-click="centerOnMe()"></button>
       <h1 class="title">Location Thingy</h1>
-      <a ui-sref="locations" class="button icon-right ion-chevron-right button-clear button-dark">Locations</a>
+      <a ui-sref="locations" class="button icon-right ion-chevron-right button-clear button-dark">All Locations</a>
     </ion-header-bar>
     <ion-content scroll="false">
       <div class="mapWrap" data-tap-disabled="true">
@@ -12,45 +11,12 @@
           <button class="button" ng-click="showMarkers()">Show All Markers</button>
           <button class="button" ng-click="hideMarkers()">Hide Markers</button>
         </div>
-
         <map center="{{positions[0].lat}}, {{positions[0].lng}}" zoom="12">
-          <!-- ngRepeat: pos in positions -->
           <marker ng-repeat="mark in markers" position="{{mark.lat}}, {{mark.lng}}" title="{{mark.title}}"
-                  id="{{mark.title}}" on-click="showInfoWindow(event, 'bar')">
-
-            <info-window id="bar" max-width="200" visible-on-marker="{{mark.title}}">
-              <div ng-non-bindable="">
-                <div id="siteNotice"></div>
-                <h1 id="firstHeading" class="firstHeading">{{mark.title}}</h1>
-                <div id="bodyContent">
-                  <p>
-                    <b>{{mark.title}}</b>{{mark.description}}
-                  </p>
-                  <p>
-                    {{mark.title}}: <a ng-href="{{mark.image}}">Image</a>
-                    <a ui-sref="ranging">CHECK THE BEACON</a>
-                  </p>
-                </div>
-              </div>
-            </info-window>
+                  id="{{mark.title}}" on-click="showInfoWindow(event, 'bar')" ng-include="'views/LocationInfo.html'">
           </marker>
         </map>
       </div>
-
-      <!--<ion-tabs class="tabs-icon-only tabs-positive">-->
-
-      <!--<ion-tab title="Event Log" href="#/eventlog" icon-on="ion-ios7-filing" icon-off="ion-ios7-filing-outline">-->
-      <!--<div ng-include src="'eventlog/EventLog.html'"></div>-->
-      <!--</ion-tab>-->
-
-      <!--<ion-tab title="Monitoring" href="#/monitoring" icon-on="icon ion-ios7-clock" icon-off="icon ion-ios7-clock-outline">-->
-      <!--<div ng-include src="'monitoring/Monitoring.html'"></div>-->
-      <!--</ion-tab>-->
-
-      <!--<ion-tab title="Ranging" href="#/ranging" icon-on="icon ion-ios7-gear" icon-off="icon ion-ios7-gear-outline">-->
-      <!--<div ng-include src="'ranging/Ranging.html'"></div>-->
-      <!--</ion-tab>-->
-
       </ion-tabs>
     </ion-content>
   </ion-pane>

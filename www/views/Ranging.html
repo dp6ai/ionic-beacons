@@ -1,15 +1,19 @@
 <ion-header-bar align-title="center" class="bar-positive">
-    <h1 class="title">Ranging</h1>
+  <a ui-sref="home" class="button icon-left ion-chevron-left button-clear button-dark">Home</a>
+
+  <h1 class="title">Ranging</h1>
 </ion-header-bar>
 
 <ion-view title="Ranging" ng-controller="RangingCtrl">
-    <ion-content class="has-header padding">
+  <ion-content class="has-header padding">
 
-        <ul id="beacon" class="dynamic"></ul>
+    <ul id="things" class="dynamic"></ul>
 
-        <ul id="events" class="dynamic"></ul>
+    <ul id="beacon" class="dynamic"></ul>
 
-        <button class="button button-full button-assertive" ng-click="startRanging()">Whats About</button>
-        </div>
-    </ion-content>
+    <ul id="events" class="dynamic"></ul>
+
+    <button class="button button-full button-assertive" ng-click="startRanging()">Whats About</button>
+    </div>
+  </ion-content>
 </ion-view>
