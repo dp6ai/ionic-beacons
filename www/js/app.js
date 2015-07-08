@@ -14,62 +14,58 @@ var app = angular.module('location',
         'com.unarin.cordova.proximity.quickstart.ranging'
     ]);
 
-    app.config(function ($stateProvider, $urlRouterProvider) {
+app.config(function ($stateProvider, $urlRouterProvider) {
 
-        //window.console.debug('Configuring com.unarin.cordova.proximity.quickstart');
+    window.console.debug('Configuring com.unarin.cordova.proximity.quickstart');
 
-        $stateProvider
-            .state('home', {
-                url: '/home',
-                templateUrl: 'views/home.html',
-                controller: 'MarkerRemoveCtrl'
-            })
-            .state('locations', {
-                url: '/locations',
-                templateUrl: 'views/locations.html',
-                controller: 'LocationsCtrl'
-            })
-            .state('location', {
-                url: '/location/:locationId',
-                templateUrl: 'views/location.html',
-                controller: 'LocationCtrl'
-            })
-            .state('ranging', {
-                url: '/ranging',
-                templateUrl: 'ranging/Ranging.html',
-                controller: 'RangingCtrl'
-            })
-            .state('monitoring', {
-                url: '/monitoring',
-                templateUrl: 'monitoring/Monitoring.html',
-                controller: 'MonitoringCtrl'
-            })
-            .state('eventlog', {
-                url: '/eventlog',
-                templateUrl: 'eventlog/EventLog.html',
-                controller: 'EventLogCtrl'
-            })
-        ;
+    $stateProvider
+        .state('home', {
+            url: '/home',
+            templateUrl: 'views/home.html',
+            controller: 'MarkerRemoveCtrl'
+        })
+        .state('locations', {
+            url: '/locations',
+            templateUrl: 'views/locations.html',
+            controller: 'LocationsCtrl'
+        })
+        .state('location', {
+            url: '/location/:locationId',
+            templateUrl: 'views/location.html',
+            controller: 'LocationCtrl'
+        })
+        .state('ranging', {
+            url: '/ranging',
+            templateUrl: 'views/Ranging.html',
+            controller: 'RangingCtrl'
+        })
+        .state('monitoring', {
+            url: '/monitoring',
+            templateUrl: 'views/Monitoring.html',
+            controller: 'MonitoringCtrl'
+        })
+        .state('eventlog', {
+            url: '/eventlog',
+            templateUrl: 'views/EventLog.html',
+            controller: 'EventLogCtrl'
+        })
+    ;
 
-        $urlRouterProvider.otherwise('/home');
-    })
+    $urlRouterProvider.otherwise('/home');
+})
 
-    app.run(function ($ionicPlatform) {
+app.run(function ($ionicPlatform) {
 
-        //console.debug('Running com.unarin.cordova.proximity.quickstart');
+    //console.debug('Running com.unarin.cordova.proximity.quickstart');
 
-        $ionicPlatform.ready(function () {
-            // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-            // for form inputs)
-            if (window.cordova && window.cordova.plugins.Keyboard) {
-                cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-            }
-            if (window.StatusBar) {
-                StatusBar.styleDefault();
-            }
-        });
-    })
-
-
-
-
+    $ionicPlatform.ready(function () {
+        // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
+        // for form inputs)
+        if (window.cordova && window.cordova.plugins.Keyboard) {
+            cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+        }
+        if (window.StatusBar) {
+            StatusBar.styleDefault();
+        }
+    });
+})

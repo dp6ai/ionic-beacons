@@ -48,6 +48,7 @@ app.controller('RangingCtrl', ['$log', '$rootScope', '$scope', '$window', '$loca
             }
         ];
 
+
     // Region data is defined here. Mapping used is from
     // region id to a string. You can adapt this to your
     // own needs, and add other data to be displayed.
