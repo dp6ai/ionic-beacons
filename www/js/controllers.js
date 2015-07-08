@@ -28,12 +28,10 @@ app.controller('MarkerRemoveCtrl', function($scope, $ionicLoading, LocationServi
         $scope.getLocations();
     });
 
-
     $scope.positions = [{
         lat: 51.7550,
         lng: -0.3360
     }];
-
 
     $scope.getLocations = function() {
         all_locations.$promise.then(function (locations) {
