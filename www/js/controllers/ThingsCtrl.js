@@ -1,27 +1,20 @@
-app.controller('RangingCtrl', ['$log', '$rootScope', '$scope', '$window', '$localForage', function ($log, $rootScope, $scope, $window, $localForage) {
-
-    // History of enter/exit events.
-    var mRegionEvents = [];
+app.controller('ThingsCtrl', ['$log', '$rootScope', '$scope', '$window', '$localForage', function ($log, $rootScope, $scope, $window, $localForage) {
 
     // Nearest ranged beacon.
     var mNearestBeacon = null;
 
+    //Maintain a list of near beacons
+    var mNearBeacons = [];
+
     // Timer that displays nearby beacons.
     var mNearestBeaconDisplayTimer = null;
+    var mNearBeaconDisplayTimer = null;
 
     // Background flag.
     var mAppInBackground = false;
 
     // Background notification id counter.
     var mNotificationId = 0;
-
-    // Mapping of region event state names.
-    // These are used in the event display string.
-    var mRegionStateNames =
-    {
-        'CLRegionStateInside': 'Enter',
-        'CLRegionStateOutside': 'Exit'
-    };
 
     // Here monitored regions are defined.
     // TODO: Update with uuid/major/minor for your beacons.
@@ -64,32 +57,13 @@ app.controller('RangingCtrl', ['$log', '$rootScope', '$scope', '$window', '$loca
     $scope.startRanging = function () {
         startMonitoringAndRanging();
         startNearestBeaconDisplayTimer();
-        displayRegionEvents();
     };
 
-    //$log.debug('ksdjfhaksdfjlsafjldskfj');
-
-    //
-    //$scope.pauseRanging = function () {
-    //    mAppInBackground = true;
-    //    stopNearestBeaconDisplayTimer();
-    //};
-    //
-    //$scope.resumeRanging = function () {
-    //    mAppInBackground = false;
-    //    startNearestBeaconDisplayTimer();
-    //    displayRegionEvents();
-    //};
-    //
     startNearestBeaconDisplayTimer = function () {
-        mNearestBeaconDisplayTimer = setInterval(displayNearestBeacon, 1000);
+        mNearestBeaconDisplayTimer = setInterval(displayNearestBeacon, 3000);
+        mNearBeaconDisplayTimer = setInterval(displayNearBeacons, 3000);
     }
 
-    //stopNearestBeaconDisplayTimer = function () {
-    //    clearInterval(mNearestBeaconDisplayTimer);
-    //    mNearestBeaconDisplayTimer = null;
-    //}
-    //
     startMonitoringAndRanging = function () {
 
         onDidDetermineStateForRegion = function (result) {
@@ -175,9 +149,52 @@ app.controller('RangingCtrl', ['$log', '$rootScope', '$scope', '$window', '$loca
             }
         }
     }
+    //
+    //updateNearBeacons = function (beacons) {
+    //    mNearBeacons = beacons;
+    //}
+
+    getBeaconId = function (beacon)
+    {
+        return beacon.uuid + ':' + beacon.major + ':' + beacon.minor;
+    }
+
+    displayNearBeacons = function () {
+        var thingsElement = angular.element( document.querySelector( '#things' ) );
+        var elements = "";
+
+        //remove old position of mNearestBeacon in mNearBeacons
+        mNearBeacons = mNearBeacons.filter(function( obj ) {
+            return getBeaconId(obj) !== getBeaconId(mNearestBeacon);
+        });
+
+        //add mNearestBeacon to head of mNearBeacons
+        mNearBeacons.unshift(mNearestBeacon);
+
+        //create elements html
+        angular.forEach(mNearBeacons, function (beacon) {
+            var element = (
+                '<div class="item item-button-right">'
+                + 'major: ' + beacon.major + '<br />'
+                + 'minor: ' + beacon.minor + '<br />'
+                + 'UUID: ' + beacon.uuid + '<br />'
+                //+ '<button class="button button-positive">'
+                //+ '<i class="icon ion-ios-telephone"></i>'
+                //+ '</button>'
+                + '</div>'
+            );
+
+            elements = elements+element;
+        });
+
+        thingsElement.empty();
+        //add elements to DOM
+        thingsElement.append(elements);
+    }
+
 
     displayNearestBeacon = function () {
-
+        console.log("somethings happening");
         var beaconElement = angular.element( document.querySelector( '#beacon' ) );
 
         if (!mNearestBeacon) {
@@ -204,95 +221,6 @@ app.controller('RangingCtrl', ['$log', '$rootScope', '$scope', '$window', '$loca
         beaconElement.empty();
 
         beaconElement.append(element);
-    }
-
-    displayRegionEvents = function ()
-    {
-        var eventsElement = angular.element(document.querySelector('#events'));
-
-        // Clear list.
-        eventsElement.empty();
-
-        // Update list.
-        for (var i = mRegionEvents.length - 1; i >= 0; --i)
-        {
-            var event = mRegionEvents[i];
-            var title = getEventDisplayString(event);
-            var element = (
-                '<li>'
-                + '<strong>' + title + '</strong>'
-                + '</li>'
-            );
-            eventsElement.append(element);
-        }
-
-        // If the list is empty display a help text.
-        if (mRegionEvents.length <= 0)
-        {
-            var element = (
-                '<li>'
-                + '<strong>'
-                +	'Waiting for region events, please move into or out of a beacon region.'
-                + '</strong>'
-                + '</li>'
-            );
-            eventsElement.append(element);
-        }
-    }
-
-    getEventDisplayString = function (event) {
-        return event.time + ': '
-            + mRegionStateNames[event.type] + ' '
-            + mRegionData[event.regionId];
-    }
-
-    saveRegionEvent = function (eventType, regionId) {
-        // Save event.
-        mRegionEvents.push(
-            {
-                type: eventType,
-                time: getTimeNow(),
-                regionId: regionId
-            });
-
-        // Truncate if more than ten entries.
-        if (mRegionEvents.length > 10) {
-            mRegionEvents.shift();
-        }
-    }
-
-
-    displayRecentRegionEvent = function () {
-        if (mAppInBackground) {
-            // Set notification title.
-            var event = mRegionEvents[mRegionEvents.length - 1];
-            if (!event) {
-                return;
-            }
-            var title = getEventDisplayString(event);
-
-            // Create notification.
-            cordova.plugins.notification.local.schedule({
-                id: ++mNotificationId,
-                title: title
-            });
-        }
-        else {
-            displayRegionEvents();
-        }
-    }
-
-    getTimeNow = function () {
-        function pad(n) {
-            return (n < 10) ? '0' + n : n;
-        }
-
-        function format(h, m, s) {
-            return pad(h) + ':' + pad(m) + ':' + pad(s);
-        }
-
-        var d = new Date();
-        return format(d.getHours(), d.getMinutes(), d.getSeconds());
     }
 
 }]);

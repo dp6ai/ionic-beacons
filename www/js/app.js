@@ -39,6 +39,11 @@ app.config(function ($stateProvider, $urlRouterProvider) {
             templateUrl: 'views/Ranging.html',
             controller: 'RangingCtrl'
         })
+        .state('things', {
+            url: '/things',
+            templateUrl: 'views/Things.html',
+            controller: 'ThingsCtrl'
+        })
         .state('monitoring', {
             url: '/monitoring',
             templateUrl: 'views/Monitoring.html',
