@@ -15,7 +15,6 @@ var app = angular.module('location',
     ]);
 
 app.config(function ($stateProvider, $urlRouterProvider) {
-
     window.console.debug('Configuring com.unarin.cordova.proximity.quickstart');
 
     $stateProvider
@@ -44,6 +43,11 @@ app.config(function ($stateProvider, $urlRouterProvider) {
             templateUrl: 'views/Things.html',
             controller: 'ThingsCtrl'
         })
+      .state('beacon', {
+          url: '/location/:locationId/beacon/:beaconId',
+          templateUrl: 'views/Beacon.html',
+          controller: 'BeaconCtrl'
+      })
         .state('monitoring', {
             url: '/monitoring',
             templateUrl: 'views/Monitoring.html',

@@ -47,8 +47,11 @@ app.controller('ThingsCtrl', [
         return $scope.location.$promise.then(function (objects) {
             var my_beacons = [];
             angular.forEach(objects.beacons, function (beacon) {
+
                 var beac = {};
-                beac["id"] = beacon.name;
+                beac["id"] = beacon.id.toString();;
+                beac["location_id"] = beacon.location_id.toString();;
+                beac["name"] = beacon.name;
                 beac["uuid"] = beacon.uuid;
                 beac['major'] = beacon.major;
                 beac['minor'] = beacon.minor;
@@ -61,16 +64,10 @@ app.controller('ThingsCtrl', [
     }
 
     startNearestBeaconDisplayTimer = function () {
-        //mNearestBeaconDisplayTimer = setInterval(displayNearestBeacon, 3000);
-        mNearBeaconDisplayTimer = setInterval(displayNearBeacons, 1000);
+        mNearBeaconDisplayTimer = setInterval(displayNearBeacons, 3000);
     }
 
     startMonitoringAndRanging = function (mRegions) {
-        onDidDetermineStateForRegion = function (result) {
-            saveRegionEvent(result.state, result.region.identifier);
-            displayRecentRegionEvent();
-        }
-
         onDidRangeBeaconsInRegion = function (result) {
             updateNearestBeacon(result.beacons);
         }
@@ -87,7 +84,6 @@ app.controller('ThingsCtrl', [
         cordova.plugins.locationManager.setDelegate(delegate);
 
         // Set delegate functions.
-        delegate.didDetermineStateForRegion = onDidDetermineStateForRegion;
         delegate.didRangeBeaconsInRegion = onDidRangeBeaconsInRegion;
 
         // Start monitoring and ranging beacons.
@@ -156,6 +152,7 @@ app.controller('ThingsCtrl', [
     }
 
     displayNearBeacons = function () {
+
         var thingsElement = angular.element( document.querySelector( '#things' ) );
         var elements = "";
 
@@ -169,56 +166,30 @@ app.controller('ThingsCtrl', [
 
         //create elements html
         angular.forEach(mNearBeacons, function (beacon) {
+            //slow this down?
+            current_beacon = (mTest.filter(function (el) {
+                return el.uuid == beacon.uuid &&
+                    el.major == beacon.major &&
+                    el.minor == beacon.minor
 
-        current_beacon = (mTest.filter(function (el) {
-            return el.uuid == beacon.uuid &&
-                el.major == beacon.major &&
-                el.minor == beacon.minor
+            }) )[0];
 
-        }) )[0];
+            var url = "/location/" + current_beacon.location_id + "/beacon/" + current_beacon.id
 
-        var element = (
-            '<a class="item item-thumbnail-right" href="#">' +
-            '<img src="' + current_beacon.image + '">' +
-            '<h2>' + current_beacon.id + '</h2>' +
-            '<p>' + current_beacon.description + '</p>' +
-            '</a>'
-        );
+            var element = (
+                '<a class="item item-thumbnail-right" href="#' + url + '" >' +
+                '<img src="' + current_beacon.image + '">' +
+                '<h2>' + current_beacon.name + '</h2>' +
+                '<p>' + current_beacon.description + '</p>' +
+                '</a>'
+            );
 
-        elements = elements+element;
+            elements = elements+element;
         });
 
         thingsElement.empty();
         //add elements to DOM
         thingsElement.append(elements);
     }
-
-    //displayNearestBeacon = function () {
-    //    var beaconElement = angular.element( document.querySelector( '#beacon' ) );
-    //
-    //    if (!mNearestBeacon) {
-    //        var element = (
-    //            '<li>'
-    //            + '<strong>No Beacons</strong><br />'
-    //            + '</li>'
-    //        );
-    //    } else {
-    //        var element = (
-    //            '<li>'
-    //            + '<strong>Nearest Beacon</strong><br />'
-    //            + 'UUID: ' + mNearestBeacon.uuid + '<br />'
-    //            + 'Major: ' + mNearestBeacon.major + '<br />'
-    //            + 'Minor: ' + mNearestBeacon.minor + '<br />'
-    //            + 'Proximity: ' + mNearestBeacon.proximity + '<br />'
-    //            + 'Distance: ' + mNearestBeacon.accuracy + '<br />'
-    //            + 'RSSI: ' + mNearestBeacon.rssi + '<br />'
-    //            + '</li>'
-    //        );
-    //    }
-    //
-    //    // Clear element.
-    //    beaconElement.empty();
-    //    beaconElement.append(element);
-    //}
 
 }]);

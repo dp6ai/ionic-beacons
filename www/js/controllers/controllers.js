@@ -1,4 +1,3 @@
-
 app.controller('LocationsCtrl', function ($scope, LocationService, $state) {
         $scope.locations = LocationService.query();
 
