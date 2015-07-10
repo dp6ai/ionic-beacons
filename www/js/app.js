@@ -40,7 +40,7 @@ app.config(function ($stateProvider, $urlRouterProvider) {
             controller: 'RangingCtrl'
         })
         .state('things', {
-            url: '/things',
+            url: '/things/:locationId',
             templateUrl: 'views/Things.html',
             controller: 'ThingsCtrl'
         })

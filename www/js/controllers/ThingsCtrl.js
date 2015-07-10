@@ -1,4 +1,24 @@
-app.controller('ThingsCtrl', ['$log', '$rootScope', '$scope', '$window', '$localForage', function ($log, $rootScope, $scope, $window, $localForage) {
+app.controller('ThingsCtrl', [
+    '$log',
+    '$rootScope',
+    '$scope',
+    '$window',
+    '$localForage',
+    '$state',
+    '$stateParams',
+    'LocationService',
+    function (
+        $log,
+        $rootScope,
+        $scope,
+        $window,
+        $localForage,
+        $state,
+        $stateParams,
+        LocationService
+    ) {
+
+    var mRegions = [];
 
     // Nearest ranged beacon.
     var mNearestBeacon = null;
@@ -16,56 +36,43 @@ app.controller('ThingsCtrl', ['$log', '$rootScope', '$scope', '$window', '$local
     // Background notification id counter.
     var mNotificationId = 0;
 
-    // Here monitored regions are defined.
-    // TODO: Update with uuid/major/minor for your beacons.
-    // You can add as many beacons as you want to use.
-    var mRegions =
-        [
-            {
-                id: 'region1',
-                uuid: 'E2C56DB5-DFFB-48D2-B060-D0F5A71096E0',
-                major: 1000,
-                minor: 1001
-            },
-            {
-                id: 'region2',
-                uuid: 'E2C56DB5-DFFB-48D2-B060-D0F5A71096E0',
-                major: 1000,
-                minor: 1100
-            },
-            {
-                id: 'region3',
-                uuid: '74278BDA-B644-4520-8F0C-720EAF059935',
-                major: 12345,
-                minor: 34567
-            }
-        ];
-
-
-    // Region data is defined here. Mapping used is from
-    // region id to a string. You can adapt this to your
-    // own needs, and add other data to be displayed.
-    // TODO: Update with major/minor for your own beacons.
-    var mRegionData =
-    {
-        'region1': 'Region One',
-        'region2': 'Region Two',
-        'region2': 'Region Three'
-
-    };
-
     $scope.startRanging = function () {
-        startMonitoringAndRanging();
-        startNearestBeaconDisplayTimer();
+        setLocation();
+        setBeaconHash().then(function (data) {
+            startMonitoringAndRanging(data);
+            startNearestBeaconDisplayTimer();
+        });
     };
+
+    setLocation = function () {
+        $scope.location = LocationService.get({location: $stateParams.locationId});
+    }
+
+    setBeaconHash = function () {
+        return $scope.location.$promise.then(function (objects) {
+            var my_beacons = [];
+            //$log.debug("setBeaconHash");
+            //$log.debug(objects.beacons);
+            angular.forEach(objects.beacons, function (beacon) {
+                var beac = {};
+                beac["id"] = beacon.name;
+                beac["uuid"] = beacon.uuid;
+                beac['major'] = beacon.major;
+                beac['minor'] = beacon.minor;
+                my_beacons.push(beac);
+            });
+            return my_beacons;
+        });
+    }
 
     startNearestBeaconDisplayTimer = function () {
         mNearestBeaconDisplayTimer = setInterval(displayNearestBeacon, 3000);
         mNearBeaconDisplayTimer = setInterval(displayNearBeacons, 3000);
     }
 
-    startMonitoringAndRanging = function () {
-
+    startMonitoringAndRanging = function (mRegions) {
+        //$log.debug("startMonitoringAndRanging");
+        //$log.debug(mRegions);
         onDidDetermineStateForRegion = function (result) {
             saveRegionEvent(result.state, result.region.identifier);
             displayRecentRegionEvent();

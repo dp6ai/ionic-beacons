@@ -35,6 +35,7 @@ app.controller('MarkerRemoveCtrl', function($scope, $ionicLoading, LocationServi
 
             angular.forEach(locations, function (location) {
                 var marker = {};
+                marker["id"] = location.id;
                 marker["lat"] = location.lat;
                 marker['lng'] = location.lng;
                 marker['title'] = location.name;
@@ -43,7 +44,6 @@ app.controller('MarkerRemoveCtrl', function($scope, $ionicLoading, LocationServi
                 marker['audio'] = location.audio;
                 my_markers.push(marker);
             });
-            console.log(my_markers);
             $scope.markers = my_markers;
         });
     };
@@ -70,7 +70,6 @@ app.controller('MarkerRemoveCtrl', function($scope, $ionicLoading, LocationServi
         navigator.geolocation.getCurrentPosition(function(position) {
             var pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
             $scope.positions.push({lat: pos.k,lng: pos.B});
-            console.log(pos);
             $scope.map.setCenter(pos);
             $ionicLoading.hide();
 

@@ -9,7 +9,7 @@
       <p>
         <img ng-src="{{mark.image}}" alt="{{mark.title}}" width="150" />
         <br />
-        <a ui-sref="things" class="button button-block icon-right ion-chevron-right button-positive">Learn More</a>
+        <a ui-sref="things({ locationId: {{mark.id}} })" class="button button-block icon-right ion-chevron-right button-positive">Learn More</a>
       </p>
     </div>
   </div>
