@@ -18,7 +18,7 @@ app.controller('ThingsCtrl', [
         LocationService
     ) {
 
-    var mRegions = [];
+    var mTest = null;
 
     // Nearest ranged beacon.
     var mNearestBeacon = null;
@@ -27,18 +27,13 @@ app.controller('ThingsCtrl', [
     var mNearBeacons = [];
 
     // Timer that displays nearby beacons.
-    var mNearestBeaconDisplayTimer = null;
+    //var mNearestBeaconDisplayTimer = null;
     var mNearBeaconDisplayTimer = null;
-
-    // Background flag.
-    var mAppInBackground = false;
-
-    // Background notification id counter.
-    var mNotificationId = 0;
 
     $scope.startRanging = function () {
         setLocation();
         setBeaconHash().then(function (data) {
+            mTest = data;
             startMonitoringAndRanging(data);
             startNearestBeaconDisplayTimer();
         });
@@ -51,14 +46,14 @@ app.controller('ThingsCtrl', [
     setBeaconHash = function () {
         return $scope.location.$promise.then(function (objects) {
             var my_beacons = [];
-            //$log.debug("setBeaconHash");
-            //$log.debug(objects.beacons);
             angular.forEach(objects.beacons, function (beacon) {
                 var beac = {};
                 beac["id"] = beacon.name;
                 beac["uuid"] = beacon.uuid;
                 beac['major'] = beacon.major;
                 beac['minor'] = beacon.minor;
+                beac['description'] = beacon.description;
+                beac['image'] = beacon.image;
                 my_beacons.push(beac);
             });
             return my_beacons;
@@ -66,13 +61,11 @@ app.controller('ThingsCtrl', [
     }
 
     startNearestBeaconDisplayTimer = function () {
-        mNearestBeaconDisplayTimer = setInterval(displayNearestBeacon, 3000);
-        mNearBeaconDisplayTimer = setInterval(displayNearBeacons, 3000);
+        //mNearestBeaconDisplayTimer = setInterval(displayNearestBeacon, 3000);
+        mNearBeaconDisplayTimer = setInterval(displayNearBeacons, 1000);
     }
 
     startMonitoringAndRanging = function (mRegions) {
-        //$log.debug("startMonitoringAndRanging");
-        //$log.debug(mRegions);
         onDidDetermineStateForRegion = function (result) {
             saveRegionEvent(result.state, result.region.identifier);
             displayRecentRegionEvent();
@@ -156,10 +149,6 @@ app.controller('ThingsCtrl', [
             }
         }
     }
-    //
-    //updateNearBeacons = function (beacons) {
-    //    mNearBeacons = beacons;
-    //}
 
     getBeaconId = function (beacon)
     {
@@ -180,18 +169,23 @@ app.controller('ThingsCtrl', [
 
         //create elements html
         angular.forEach(mNearBeacons, function (beacon) {
-            var element = (
-                '<div class="item item-button-right">'
-                + 'major: ' + beacon.major + '<br />'
-                + 'minor: ' + beacon.minor + '<br />'
-                + 'UUID: ' + beacon.uuid + '<br />'
-                //+ '<button class="button button-positive">'
-                //+ '<i class="icon ion-ios-telephone"></i>'
-                //+ '</button>'
-                + '</div>'
-            );
 
-            elements = elements+element;
+        current_beacon = (mTest.filter(function (el) {
+            return el.uuid == beacon.uuid &&
+                el.major == beacon.major &&
+                el.minor == beacon.minor
+
+        }) )[0];
+
+        var element = (
+            '<a class="item item-thumbnail-right" href="#">' +
+            '<img src="' + current_beacon.image + '">' +
+            '<h2>' + current_beacon.id + '</h2>' +
+            '<p>' + current_beacon.description + '</p>' +
+            '</a>'
+        );
+
+        elements = elements+element;
         });
 
         thingsElement.empty();
@@ -199,45 +193,32 @@ app.controller('ThingsCtrl', [
         thingsElement.append(elements);
     }
 
-
-    displayNearestBeacon = function () {
-        console.log("somethings happening");
-        var beaconElement = angular.element( document.querySelector( '#beacon' ) );
-
-        if (!mNearestBeacon) {
-            var element = (
-                '<li>'
-                + '<strong>No Beacons</strong><br />'
-                + '</li>'
-            );
-        } else {
-            var element = (
-                '<li>'
-                + '<strong>Nearest Beacon</strong><br />'
-                + 'UUID: ' + mNearestBeacon.uuid + '<br />'
-                + 'Major: ' + mNearestBeacon.major + '<br />'
-                + 'Minor: ' + mNearestBeacon.minor + '<br />'
-                + 'Proximity: ' + mNearestBeacon.proximity + '<br />'
-                + 'Distance: ' + mNearestBeacon.accuracy + '<br />'
-                + 'RSSI: ' + mNearestBeacon.rssi + '<br />'
-                + '</li>'
-            );
-        }
-
-        // Clear element.
-        beaconElement.empty();
-
-        beaconElement.append(element);
-    }
+    //displayNearestBeacon = function () {
+    //    var beaconElement = angular.element( document.querySelector( '#beacon' ) );
+    //
+    //    if (!mNearestBeacon) {
+    //        var element = (
+    //            '<li>'
+    //            + '<strong>No Beacons</strong><br />'
+    //            + '</li>'
+    //        );
+    //    } else {
+    //        var element = (
+    //            '<li>'
+    //            + '<strong>Nearest Beacon</strong><br />'
+    //            + 'UUID: ' + mNearestBeacon.uuid + '<br />'
+    //            + 'Major: ' + mNearestBeacon.major + '<br />'
+    //            + 'Minor: ' + mNearestBeacon.minor + '<br />'
+    //            + 'Proximity: ' + mNearestBeacon.proximity + '<br />'
+    //            + 'Distance: ' + mNearestBeacon.accuracy + '<br />'
+    //            + 'RSSI: ' + mNearestBeacon.rssi + '<br />'
+    //            + '</li>'
+    //        );
+    //    }
+    //
+    //    // Clear element.
+    //    beaconElement.empty();
+    //    beaconElement.append(element);
+    //}
 
 }]);
-////------------------------------------------//
-//var beaconElement = angular.element(document.querySelector('#beacon'));
-//var element = (
-//    '<li><h1>BOOOOOM</h1></li>'
-//);
-//// Clear element.
-//beaconElement.empty();
-//beaconElement.append(element);
-////------------------------------------------//
-
